@@ -61,4 +61,76 @@ document.addEventListener('DOMContentLoaded', function() {
       heroContent.style.transform = 'translateY(0)';
     }, 100);
   }
+
+  // D3.js 3D Network Animation
+  const container = document.getElementById('d3-background');
+  if (container) {
+    const width = container.offsetWidth;
+    const height = container.offsetHeight;
+    
+    const svg = d3.select('#d3-background')
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height);
+    
+    const nodes = d3.range(50).map(() => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      radius: Math.random() * 3 + 1
+    }));
+    
+    const links = [];
+    nodes.forEach((node, i) => {
+      nodes.slice(i + 1).forEach((otherNode, j) => {
+        if (Math.random() < 0.1) {
+          links.push({ source: node, target: otherNode });
+        }
+      });
+    });
+    
+    const link = svg.selectAll('.link')
+      .data(links)
+      .enter().append('line')
+      .attr('class', 'link')
+      .style('stroke', '#64ffda')
+      .style('stroke-opacity', 0.3)
+      .style('stroke-width', 1);
+    
+    const node = svg.selectAll('.node')
+      .data(nodes)
+      .enter().append('circle')
+      .attr('class', 'node')
+      .attr('r', d => d.radius)
+      .style('fill', '#64ffda')
+      .style('opacity', 0.6);
+    
+    function animate() {
+      nodes.forEach(node => {
+        node.x += node.vx;
+        node.y += node.vy;
+        
+        if (node.x < 0 || node.x > width) node.vx *= -1;
+        if (node.y < 0 || node.y > height) node.vy *= -1;
+        
+        node.x = Math.max(0, Math.min(width, node.x));
+        node.y = Math.max(0, Math.min(height, node.y));
+      });
+      
+      node
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y);
+      
+      link
+        .attr('x1', d => d.source.x)
+        .attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x)
+        .attr('y2', d => d.target.y);
+      
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+  }
 });
