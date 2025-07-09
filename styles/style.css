@@ -472,11 +472,83 @@ body {
 
 /* Experience Section */
 .experience-content {
-  max-width: 700px;
+  max-width: 800px;
+  position: relative;
+}
+
+.experience-timeline {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--green), var(--blue), var(--pink));
+  opacity: 0.3;
 }
 
 .job {
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  padding: 25px;
+  background: linear-gradient(135deg, var(--light-navy), var(--lightest-navy));
+  border-radius: var(--border-radius);
+  border-left: 3px solid var(--green);
+  position: relative;
+  margin-left: 40px;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.job:hover {
+  transform: translateX(10px);
+  box-shadow: 0 10px 30px -10px var(--navy-shadow);
+  border-left-color: var(--blue);
+}
+
+.job::before {
+  content: '';
+  position: absolute;
+  left: -44px;
+  top: 30px;
+  width: 12px;
+  height: 12px;
+  background: var(--green);
+  border-radius: 50%;
+  border: 3px solid var(--navy);
+  transition: all 0.3s ease;
+}
+
+.job:hover::before {
+  background: var(--blue);
+  transform: scale(1.3);
+  box-shadow: 0 0 20px rgba(100, 255, 218, 0.5);
+}
+
+.job-skills {
+  width: 100%;
+  height: 4px;
+  background: var(--lightest-navy);
+  border-radius: 2px;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+.job-skills-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--blue));
+  border-radius: 2px;
+  width: 0;
+  transition: width 1.5s ease;
+}
+
+.experience-viz {
+  width: 100%;
+  height: 60px;
+  margin: 15px 0;
+}
+
+.job:hover .company {
+  color: var(--blue);
 }
 
 .job-title {

@@ -394,6 +394,156 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   }, 2500);
   
+  // Experience Section D3 Effects
+  const experienceSection = document.getElementById('experience');
+  const experienceObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const jobs = entry.target.querySelectorAll('.job');
+        
+        jobs.forEach((job, index) => {
+          setTimeout(() => {
+            job.style.opacity = '1';
+            job.style.transform = 'translateX(0)';
+            
+            // Animate skill bar
+            const skillFill = job.querySelector('.job-skills-fill');
+            const skillLevel = job.dataset.skills;
+            if (skillFill && skillLevel) {
+              setTimeout(() => {
+                skillFill.style.width = skillLevel + '%';
+              }, 300);
+            }
+            
+            // Animate description items
+            const descItems = job.querySelectorAll('.job-description li');
+            descItems.forEach((item, i) => {
+              setTimeout(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+              }, 500 + i * 100);
+            });
+          }, index * 200);
+        });
+        
+        experienceObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  
+  if (experienceSection) {
+    experienceObserver.observe(experienceSection);
+  }
+
+  // D3 Experience Visualizations
+  // PDI Tech Stack - Animated dots
+  const pdiViz = d3.select('#pdi-viz')
+    .append('svg')
+    .attr('width', '100%')
+    .attr('height', 60);
+  
+  const techData = d3.range(8).map(i => ({ x: 20 + i * 30, y: 30 }));
+  pdiViz.selectAll('.tech-dot')
+    .data(techData)
+    .enter()
+    .append('circle')
+    .attr('class', 'tech-dot')
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+    .attr('r', 0)
+    .attr('fill', '#64ffda')
+    .attr('opacity', 0.7)
+    .transition()
+    .delay((d, i) => i * 100)
+    .duration(500)
+    .attr('r', 4)
+    .on('end', function() {
+      d3.select(this)
+        .transition()
+        .duration(1500)
+        .attr('r', 6)
+        .attr('opacity', 0.4)
+        .transition()
+        .duration(1500)
+        .attr('r', 4)
+        .attr('opacity', 0.7)
+        .on('end', function pulse() {
+          d3.select(this)
+            .transition()
+            .duration(2000 + Math.random() * 1000)
+            .attr('r', 6)
+            .attr('opacity', 0.4)
+            .transition()
+            .duration(2000 + Math.random() * 1000)
+            .attr('r', 4)
+            .attr('opacity', 0.7)
+            .on('end', pulse);
+        });
+    });
+
+  // GT Investment Committee - Stock chart simulation
+  const gtViz = d3.select('#gt-viz')
+    .append('svg')
+    .attr('width', '100%')
+    .attr('height', 60);
+  
+  const chartData = d3.range(10).map(i => ({ x: i * 25, y: 30 + Math.random() * 20 }));
+  
+  const line = d3.line()
+    .x(d => d.x)
+    .y(d => d.y)
+    .curve(d3.curveMonotoneX);
+  
+  gtViz.append('path')
+    .datum(chartData)
+    .attr('fill', 'none')
+    .attr('stroke', '#64ffda')
+    .attr('stroke-width', 2)
+    .attr('d', line)
+    .attr('stroke-dasharray', function() { return this.getTotalLength(); })
+    .attr('stroke-dashoffset', function() { return this.getTotalLength(); })
+    .transition()
+    .duration(2000)
+    .attr('stroke-dashoffset', 0);
+  
+  gtViz.selectAll('.data-point')
+    .data(chartData)
+    .enter()
+    .append('circle')
+    .attr('class', 'data-point')
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+    .attr('r', 0)
+    .attr('fill', '#64ffda')
+    .transition()
+    .delay((d, i) => i * 200)
+    .duration(300)
+    .attr('r', 3);
+
+  // Canopy - Growth bars
+  const canopyViz = d3.select('#canopy-viz')
+    .append('svg')
+    .attr('width', '100%')
+    .attr('height', 60);
+  
+  const growthBars = [15, 25, 35, 20, 30];
+  canopyViz.selectAll('.growth-bar')
+    .data(growthBars)
+    .enter()
+    .append('rect')
+    .attr('class', 'growth-bar')
+    .attr('x', (d, i) => 20 + i * 40)
+    .attr('y', 50)
+    .attr('width', 25)
+    .attr('height', 0)
+    .attr('fill', '#64ffda')
+    .attr('opacity', 0.7)
+    .transition()
+    .delay((d, i) => i * 300)
+    .duration(1000)
+    .attr('height', d => d)
+    .attr('y', d => 50 - d);
+  
   // Add ripple animation keyframes
   const style = document.createElement('style');
   style.textContent = `
@@ -401,19 +551,6 @@ document.addEventListener('DOMContentLoaded', function() {
       to {
         transform: scale(4);
         opacity: 0;
-      }
-    }
-    
-    .skill-glow {
-      animation: skillGlow 2s ease-in-out infinite alternate;
-    }
-    
-    @keyframes skillGlow {
-      from {
-        box-shadow: 0 0 5px rgba(100, 255, 218, 0.2);
-      }
-      to {
-        box-shadow: 0 0 20px rgba(100, 255, 218, 0.4), 0 0 30px rgba(100, 255, 218, 0.2);
       }
     }
   `;
