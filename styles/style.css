@@ -322,6 +322,7 @@ body {
 .image-wrapper:hover .headshot {
   filter: none;
   mix-blend-mode: normal;
+  transform: scale(1.05) rotate(2deg);
 }
 
 /* Experience Section */
