@@ -1,0 +1,86 @@
+/* Base Styles */
+:root {
+  --primary: #3498db;
+  --dark: #2c3e50;
+  --light: #ecf0f1;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+/* Navigation */
+#navbar {
+  background: var(--dark);
+  position: fixed;
+  width: 100%;
+  top: 0;
+}
+
+#navbar ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 1rem;
+}
+
+#navbar a {
+  color: white;
+  text-decoration: none;
+  margin: 0 1rem;
+  transition: color 0.3s;
+}
+
+#navbar a:hover {
+  color: var(--primary);
+}
+
+/* Hero Section */
+.hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('assets/bg.jpg');
+  color: white;
+}
+
+.highlight {
+  color: var(--primary);
+}
+
+/* Typing Animation */
+.typing-text {
+  font-size: 1.5rem;
+  margin: 1rem 0;
+}
+
+/* Projects Grid */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.project-card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 5px;
+  transition: transform 0.3s;
+}
+
+.project-card:hover {
+  transform: translateY(-10px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .about-grid {
+    flex-direction: column;
+  }
+}
