@@ -497,6 +497,53 @@ body {
   mix-blend-mode: normal;
 }
 
+/* Fun Facts Section */
+.fun-facts-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.fact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.fact-item {
+  background-color: var(--light-navy);
+  border-radius: var(--border-radius);
+  padding: 30px 25px;
+  text-align: center;
+  transition: var(--transition);
+  border: 1px solid var(--lightest-navy);
+}
+
+.fact-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 30px -15px var(--navy-shadow);
+}
+
+.fact-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.fact-item h3 {
+  color: var(--lightest-slate);
+  font-size: var(--fz-xl);
+  margin: 0 0 15px;
+  font-weight: 600;
+}
+
+.fact-item p {
+  color: var(--slate);
+  font-size: var(--fz-md);
+  line-height: 1.5;
+  margin: 0;
+}
+
 /* Contact Section */
 .contact-content {
   max-width: 600px;
