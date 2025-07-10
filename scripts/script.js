@@ -228,172 +228,6 @@ document.addEventListener('DOMContentLoaded', function() {
     animate();
   }
 
-  // Fun Facts D3 Visualizations
-  // Soccer goal and ball animation
-  const soccerViz = d3.select('#soccer-viz')
-    .append('svg')
-    .attr('width', '100%')
-    .attr('height', 60);
-  
-  // Goal posts
-  soccerViz.append('text')
-    .attr('x', 220)
-    .attr('y', 35)
-    .attr('font-size', '30px')
-    .text('🥅')
-    .attr('opacity', 0.7);
-  
-  const ball = soccerViz.append('text')
-    .attr('x', 20)
-    .attr('y', 35)
-    .attr('font-size', '20px')
-    .text('⚽');
-  
-  function animateBall() {
-    ball.transition()
-      .duration(1500)
-      .attr('x', 215)
-      .on('end', function() {
-        // Explosion effect
-        d3.select(this).text('💥')
-          .attr('font-size', '25px')
-          .transition()
-          .duration(500)
-          .attr('opacity', 0)
-          .on('end', function() {
-            d3.select(this)
-              .text('⚽')
-              .attr('font-size', '20px')
-              .attr('x', 20)
-              .attr('opacity', 1);
-            setTimeout(animateBall, 1000);
-          });
-      });
-  }
-  animateBall();
-
-  // Country flags display
-  const travelViz = d3.select('#travel-viz')
-    .append('svg')
-    .attr('width', '100%')
-    .attr('height', 60);
-  
-  const countryFlags = [ '\uD83C\uDDEA\uD83C\uDDF8', // Spain
-  '\uD83C\uDDEE\uD83C\uDDF9', // Italy
-  '\uD83C\uDDF2\uD83C\uDDE6', // Morocco
-  '\uD83C\uDDE9\uD83C\uDDEA', // Germany
-  '\uD83C\uDDF3\uD83C\uDDF1', // Netherlands
-  '\uD83C\uDDEE\uD83C\uDDEA', // Ireland
-  '\uD83C\uDDED\uD83C\uDDF7', // Croatia
-  '\uD83C\uDDE7\uD83C\uDDE6'  // Bosnia and Herzegovina
-  ]
-  
-  travelViz.selectAll('.country-flag')
-    .data(countryFlags)
-    .enter()
-    .append('text')
-    .attr('class', 'country-flag')
-    .attr('x', (d, i) => 15 + i * 30)
-    .attr('y', 35)
-    .attr('font-size', '20px')
-    .attr('opacity', 0)
-    .text(d => d)
-    .transition()
-    .delay((d, i) => i * 200)
-    .duration(500)
-    .attr('opacity', 1);
-
-  // Family chaos animation
-  const familyViz = d3.select('#family-viz')
-    .append('svg')
-    .attr('width', '100%')
-    .attr('height', 60);
-  
-  // Family house
-  familyViz.append('text')
-    .attr('x', 10)
-    .attr('y', 35)
-    .attr('font-size', '25px')
-    .text('🏠')
-    .attr('opacity', 0)
-    .transition()
-    .duration(500)
-    .attr('opacity', 1);
-  
-  // Family members with chaos effect
-  const familyData = [
-    { emoji: '👨', x: 50, y: 25, delay: 200 },
-    { emoji: '👩', x: 70, y: 25, delay: 400 },
-    { emoji: '👦', x: 90, y: 35, delay: 600 },
-    { emoji: '👧', x: 110, y: 35, delay: 800 },
-    { emoji: '👶', x: 130, y: 35, delay: 1000 },
-    { emoji: '🧒', x: 150, y: 35, delay: 1200 },
-    { emoji: '🐕', x: 180, y: 40, delay: 1400 },
-    { emoji: '🐕', x: 200, y: 40, delay: 1600 },
-    { emoji: '🐕', x: 220, y: 40, delay: 1800 },
-    { emoji: '🐱', x: 240, y: 40, delay: 2000 }
-  ];
-  
-  familyData.forEach((member, i) => {
-    const memberElement = familyViz.append('text')
-      .attr('x', member.x)
-      .attr('y', member.y)
-      .attr('font-size', '16px')
-      .text(member.emoji)
-      .attr('opacity', 0)
-      .transition()
-      .delay(member.delay)
-      .duration(300)
-      .attr('opacity', 1)
-      .on('end', function() {
-        // Add bouncing animation
-        d3.select(this)
-          .transition()
-          .duration(800)
-          .attr('y', member.y - 5)
-          .transition()
-          .duration(800)
-          .attr('y', member.y)
-          .on('end', function bounce() {
-            d3.select(this)
-              .transition()
-              .duration(1000 + Math.random() * 1000)
-              .attr('y', member.y - Math.random() * 8)
-              .transition()
-              .duration(1000 + Math.random() * 1000)
-              .attr('y', member.y)
-              .on('end', bounce);
-          });
-      });
-  });
-  
-  // Chaos indicator
-  setTimeout(() => {
-    familyViz.append('text')
-      .attr('x', 270)
-      .attr('y', 35)
-      .attr('font-size', '20px')
-      .text('💥')
-      .attr('opacity', 0)
-      .transition()
-      .duration(500)
-      .attr('opacity', 1)
-      .transition()
-      .delay(500)
-      .duration(500)
-      .attr('opacity', 0)
-      .on('end', function flash() {
-        d3.select(this)
-          .transition()
-          .duration(300)
-          .attr('opacity', 1)
-          .transition()
-          .duration(300)
-          .attr('opacity', 0)
-          .on('end', () => setTimeout(flash, Math.random() * 3000 + 2000));
-      });
-  }, 2500);
-  
   // Experience Section D3 Effects
   const experienceSection = document.getElementById('experience');
   const experienceObserver = new IntersectionObserver((entries) => {
@@ -544,7 +378,93 @@ document.addEventListener('DOMContentLoaded', function() {
     .attr('height', d => d)
     .attr('y', d => 50 - d);
   
-  // Add ripple animation keyframes
+  // Fun Facts Background Particles & Mouse Interaction
+  const funFactsSection = document.getElementById('fun-facts');
+  const funFactsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        initFunFactsEffects();
+        funFactsObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  
+  if (funFactsSection) {
+    funFactsObserver.observe(funFactsSection);
+  }
+
+  function initFunFactsEffects() {
+    // Background particle system
+    const particleContainer = d3.select('.fun-facts-content')
+      .insert('div', ':first-child')
+      .style('position', 'absolute')
+      .style('top', '0')
+      .style('left', '0')
+      .style('width', '100%')
+      .style('height', '100%')
+      .style('pointer-events', 'none')
+      .style('z-index', '0')
+      .append('svg')
+      .attr('width', '100%')
+      .attr('height', '100%');
+    
+    const particles = d3.range(2000).map(() => ({
+      x: Math.random() * 1000,
+      y: Math.random() * 600,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      radius: Math.random() * 2 + 1
+    }));
+    
+    const particleNodes = particleContainer.selectAll('.particle')
+      .data(particles)
+      .enter().append('circle')
+      .attr('class', 'particle')
+      .attr('r', d => d.radius)
+      .attr('fill', '#64ffda')
+      .attr('opacity', 0.3);
+    
+    function animateParticles() {
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > 1000) p.vx *= -1;
+        if (p.y < 0 || p.y > 600) p.vy *= -1;
+      });
+      
+      particleNodes
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y);
+      
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+    
+    // Mouse interaction for cards
+    document.querySelectorAll('.fact-item').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 10;
+        const rotateY = (centerX - x) / 10;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+        card.style.boxShadow = `${(x - centerX) / 5}px ${(y - centerY) / 5}px 25px rgba(100, 255, 218, 0.2)`;
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        card.style.boxShadow = '';
+      });
+    });
+  }
+
+  // Add CSS for fun facts effects
   const style = document.createElement('style');
   style.textContent = `
     @keyframes ripple {
@@ -552,6 +472,14 @@ document.addEventListener('DOMContentLoaded', function() {
         transform: scale(4);
         opacity: 0;
       }
+    }
+    .fun-facts-content {
+      position: relative;
+    }
+    .fact-item {
+      transition: all 0.005s ease;
+      position: relative;
+      z-index: 1;
     }
   `;
   document.head.appendChild(style);
