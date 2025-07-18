@@ -712,6 +712,8 @@ body {
 .project-image:hover img {
   filter: none;
   mix-blend-mode: normal;
+  height: 120%;
+  width: 120%;
 }
 
 /* Fun Facts Section */
