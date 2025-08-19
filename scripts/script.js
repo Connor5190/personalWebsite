@@ -359,6 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .append('svg')
     .attr('width', '100%')
     .attr('height', 60);
+
   
   const growthBars = [15, 25, 35, 20, 30];
   canopyViz.selectAll('.growth-bar')
@@ -377,6 +378,139 @@ document.addEventListener('DOMContentLoaded', function() {
     .duration(1000)
     .attr('height', d => d)
     .attr('y', d => 50 - d);
+
+  // Noded - Software Engineering Network Visualization
+  const nodedViz = d3.select('#noded-viz')
+    .append('svg')
+    .attr('width', '100%')
+    .attr('height', 60);
+  
+  // Create a network of interconnected nodes representing software systems
+  const networkNodes = [
+    { id: 0, x: 30, y: 30, type: 'api', size: 5 },
+    { id: 1, x: 80, y: 20, type: 'database', size: 4 },
+    { id: 2, x: 130, y: 35, type: 'frontend', size: 4 },
+    { id: 3, x: 180, y: 25, type: 'backend', size: 5 },
+    { id: 4, x: 230, y: 30, type: 'microservice', size: 3 },
+    { id: 5, x: 280, y: 35, type: 'cache', size: 3 },
+    { id: 6, x: 330, y: 25, type: 'queue', size: 3 }
+  ];
+  
+  const networkLinks = [
+    { source: 0, target: 1, strength: 0.8 },
+    { source: 0, target: 2, strength: 0.6 },
+    { source: 1, target: 3, strength: 0.9 },
+    { source: 2, target: 3, strength: 0.7 },
+    { source: 3, target: 4, strength: 0.8 },
+    { source: 4, target: 5, strength: 0.5 },
+    { source: 5, target: 6, strength: 0.6 },
+    { source: 0, target: 6, strength: 0.4 }
+  ];
+  
+  // Draw connections
+  nodedViz.selectAll('.network-link')
+    .data(networkLinks)
+    .enter()
+    .append('line')
+    .attr('class', 'network-link')
+    .attr('x1', d => networkNodes[d.source].x)
+    .attr('y1', d => networkNodes[d.source].y)
+    .attr('x2', d => networkNodes[d.target].x)
+    .attr('y2', d => networkNodes[d.target].y)
+    .style('stroke', '#64ffda')
+    .style('stroke-width', 0)
+    .style('stroke-opacity', 0)
+    .transition()
+    .delay((d, i) => i * 150)
+    .duration(800)
+    .style('stroke-width', d => d.strength * 2)
+    .style('stroke-opacity', 0.6);
+  
+  // Draw nodes
+  const nodeElements = nodedViz.selectAll('.network-node')
+    .data(networkNodes)
+    .enter()
+    .append('circle')
+    .attr('class', 'network-node')
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+    .attr('r', 0)
+    .attr('fill', '#64ffda')
+    .attr('opacity', 0);
+  
+  // Animate nodes appearing
+  nodeElements
+    .transition()
+    .delay((d, i) => i * 200)
+    .duration(600)
+    .attr('r', d => d.size)
+    .attr('opacity', 0.8)
+    .on('end', function() {
+      // Start pulsing animation after nodes appear
+      d3.select(this)
+        .transition()
+        .duration(2000 + Math.random() * 1000)
+        .attr('r', d => d.size * 1.3)
+        .attr('opacity', 0.4)
+        .transition()
+        .duration(2000 + Math.random() * 1000)
+        .attr('r', d => d.size)
+        .attr('opacity', 0.8)
+        .on('end', function pulse() {
+          d3.select(this)
+            .transition()
+            .duration(2000 + Math.random() * 1000)
+            .attr('r', d => d.size * 1.3)
+            .attr('opacity', 0.4)
+            .transition()
+            .duration(2000 + Math.random() * 1000)
+            .attr('r', d => d.size)
+            .attr('opacity', 0.8)
+            .on('end', pulse);
+        });
+    });
+  
+  // Add data flow animation
+  const dataFlow = nodedViz.append('circle')
+    .attr('r', 2)
+    .attr('fill', '#64ffda')
+    .attr('opacity', 0.8);
+  
+  function animateDataFlow() {
+    const path = [
+      [30, 30], [80, 20], [130, 35], [180, 25], [230, 30], [280, 35], [330, 25]
+    ];
+    
+    dataFlow
+      .attr('cx', path[0][0])
+      .attr('cy', path[0][1])
+      .attr('opacity', 0.8)
+      .transition()
+      .duration(3000)
+      .ease(d3.easeLinear)
+      .tween('attr', function() {
+        return function(t) {
+          const currentIndex = Math.floor(t * (path.length - 1));
+          const nextIndex = Math.min(currentIndex + 1, path.length - 1);
+          const progress = (t * (path.length - 1)) % 1;
+          
+          const current = path[currentIndex];
+          const next = path[nextIndex];
+          
+          const x = current[0] + (next[0] - current[0]) * progress;
+          const y = current[1] + (next[1] - current[1]) * progress;
+          
+          d3.select(this).attr('cx', x).attr('cy', y);
+        };
+      })
+      .attr('opacity', 0)
+      .on('end', () => {
+        setTimeout(animateDataFlow, 2000);
+      });
+  }
+  
+  // Start data flow animation after a delay
+  setTimeout(animateDataFlow, 1000);
   
   // Fun Facts Background Particles & Mouse Interaction
   const funFactsSection = document.getElementById('fun-facts');

@@ -563,6 +563,32 @@ body {
   color: var(--green);
 }
 
+.company a {
+  color: var(--green);
+  text-decoration: none;
+  transition: var(--transition);
+  position: relative;
+}
+
+.company a:hover {
+  color: var(--white);
+}
+
+.company a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--green);
+  transition: width 0.3s ease;
+}
+
+.company a:hover::after {
+  width: 100%;
+}
+
 .job-date {
   color: var(--light-slate);
   font-family: var(--font-mono);
