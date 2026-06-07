@@ -1,620 +1,272 @@
-document.addEventListener('DOMContentLoaded', function() {
-  // Smooth Scrolling
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    });
-  });
+document.addEventListener('DOMContentLoaded', () => {
 
-  // Navbar scroll effect
-  let scrollTimeout;
-  window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
-      navbar.style.height = 'var(--nav-scroll-height)';
-      navbar.style.backgroundColor = 'rgba(10, 25, 47, 0.95)';
+  // D3 selection refs — declared here so updateD3Colors() can safely reference
+  // them before the D3 section runs (avoids TDZ crash when applyTheme() fires).
+  let d3Dots = null, d3Lines = null;
+
+  // ── Theme toggle ─────────────────────────────────────────────
+  const html         = document.documentElement;
+  const themeToggle  = document.getElementById('theme-toggle');
+  const savedTheme   = localStorage.getItem('theme') || 'dark';
+
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      html.dataset.theme = 'light';
     } else {
-      navbar.style.height = 'var(--nav-height)';
-      navbar.style.backgroundColor = 'rgba(10, 25, 47, 0.85)';
+      delete html.dataset.theme;
     }
+    localStorage.setItem('theme', theme);
+    updateD3Colors(theme);
+    // If already scrolled past hero, update nav bg immediately on theme change.
+    // Uses a local query to avoid TDZ on the outer `navbar` const.
+    const nav = document.querySelector('.navbar');
+    if (nav && nav.style.background) {
+      nav.style.background = theme === 'light'
+        ? 'rgba(245, 240, 232, 0.92)'
+        : 'rgba(10, 10, 8, 0.92)';
+      nav.style.borderBottom = theme === 'light'
+        ? '1px solid rgba(208, 203, 195, 1)'
+        : '1px solid rgba(37, 35, 32, 1)';
+    }
+  }
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const next = (html.dataset.theme === 'light') ? 'dark' : 'light';
+      applyTheme(next);
+    });
+  }
+
+  applyTheme(savedTheme);
+
+  // ── Smooth anchor scrolling ──────────────────────────────────
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
   });
 
-  // Fade in animation on scroll
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
+  // ── Custom cursor ────────────────────────────────────────────
+  const cursor     = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursor-ring');
 
-  const observer = new IntersectionObserver((entries) => {
+  if (window.matchMedia('(pointer: fine)').matches && cursor && cursorRing) {
+    let rx = 0, ry = 0; // ring position (lagged)
+    let cx = 0, cy = 0; // cursor position
+
+    document.addEventListener('mousemove', e => {
+      cx = e.clientX; cy = e.clientY;
+      cursor.style.left = cx + 'px';
+      cursor.style.top  = cy + 'px';
+    });
+
+    // Lagged ring
+    (function animateRing() {
+      rx += (cx - rx) * 0.12;
+      ry += (cy - ry) * 0.12;
+      cursorRing.style.left = rx + 'px';
+      cursorRing.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    })();
+
+    // Hover state on interactive elements
+    document.querySelectorAll('a, button, .ff-card, .exp-row, .project-feature-image').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); cursorRing.classList.add('hover'); });
+      el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); cursorRing.classList.remove('hover'); });
+    });
+  }
+
+  // ── Scroll progress bar ──────────────────────────────────────
+  const progressBar = document.getElementById('scroll-progress');
+  if (progressBar) {
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+      progressBar.style.width = Math.min(pct, 100) + '%';
+    }, { passive: true });
+  }
+
+  // ── Hero name clip-reveal ────────────────────────────────────
+  const nameLines = document.querySelectorAll('.hero-name-line');
+  nameLines.forEach((line, i) => {
+    const delay = parseInt(line.dataset.delay || 0, 10);
+    setTimeout(() => line.classList.add('revealed'), 200 + delay);
+  });
+
+  // ── Scroll-triggered fade-in ─────────────────────────────────
+  const fadeTargets = [
+    '.about-marker', '.about-lead', '.about-para', '.about-stack',
+    '.exp-header', '.exp-row',
+    '.projects-header', '.project-feature',
+    '.ff-header', '.ff-card',
+    '.contact-eyebrow', '.contact-headline', '.contact-email-btn', '.contact-links',
+  ].join(', ');
+
+  const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
+        entry.target.classList.add('in-view');
+        io.unobserve(entry.target);
       }
     });
-  }, observerOptions);
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-  // Observe sections for fade-in animation
-  document.querySelectorAll('.section').forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(20px)';
-    section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(section);
+  document.querySelectorAll(fadeTargets).forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = `opacity 0.65s ease ${(i % 4) * 0.07}s, transform 0.65s ease ${(i % 4) * 0.07}s`;
+    io.observe(el);
   });
 
-  // Enhanced About Section Animations
-  const aboutSection = document.getElementById('about');
-  const aboutObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        // Trigger text animations
-        const aboutTexts = entry.target.querySelectorAll('.about-text p');
-        const skillItems = entry.target.querySelectorAll('.skills-list li');
-        
-        aboutTexts.forEach((text, index) => {
-          setTimeout(() => {
-            text.style.animationPlayState = 'running';
-          }, index * 200);
-        });
-        
-        skillItems.forEach((skill, index) => {
-          setTimeout(() => {
-            skill.style.animationPlayState = 'running';
-          }, 700 + index * 100);
-        });
-        
-        aboutObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.3 });
-  
-  if (aboutSection) {
-    // Pause animations initially
-    aboutSection.querySelectorAll('.about-text p, .skills-list li').forEach(el => {
-      el.style.animationPlayState = 'paused';
-    });
-    aboutObserver.observe(aboutSection);
-  }
+  // Apply in-view class
+  const styleTag = document.createElement('style');
+  styleTag.textContent = '.in-view { opacity: 1 !important; transform: translateY(0) !important; }';
+  document.head.appendChild(styleTag);
 
-  // Interactive skill effects
-  document.querySelectorAll('.skills-list li').forEach(skill => {
-    skill.addEventListener('mouseenter', function() {
-      // Create ripple effect
-      const ripple = document.createElement('div');
-      ripple.style.position = 'absolute';
-      ripple.style.borderRadius = '50%';
-      ripple.style.background = 'rgba(100, 255, 218, 0.4)';
-      ripple.style.transform = 'scale(0)';
-      ripple.style.animation = 'ripple 0.6s linear';
-      ripple.style.left = '50%';
-      ripple.style.top = '50%';
-      ripple.style.width = '20px';
-      ripple.style.height = '20px';
-      ripple.style.marginLeft = '-10px';
-      ripple.style.marginTop = '-10px';
-      ripple.style.pointerEvents = 'none';
-      
-      this.style.position = 'relative';
-      this.appendChild(ripple);
-      
-      setTimeout(() => {
-        if (ripple.parentNode) {
-          ripple.parentNode.removeChild(ripple);
-        }
-      }, 600);
-    });
+  // Stagger exp-rows specifically
+  document.querySelectorAll('.exp-row').forEach((row, i) => {
+    row.style.transitionDelay = `${i * 0.08}s`;
   });
 
-  // Typing animation function
-  function typeWriter(element, text, speed = 100, callback) {
-    let i = 0;
-    element.classList.add('typing-cursor');
-    
-    function type() {
-      if (i < text.length) {
-        element.textContent += text.charAt(i);
-        i++;
-        setTimeout(type, speed);
-      } else {
-        element.classList.remove('typing-cursor');
-        if (callback) callback();
-      }
-    }
-    type();
+  // ── D3 hero background — amber constellation ─────────────────
+  function updateD3Colors(theme) {
+    // dark: bright gold / light: deeper amber, slightly more opaque
+    const nodeColor  = theme === 'light' ? '#9A5C06' : '#D4A843';
+    const lineColor  = theme === 'light' ? '#9A5C06' : '#D4A843';
+    const nodeOpacity = theme === 'light' ? 0.55 : 0.5;
+    const lineOpacity = theme === 'light' ? 0.22 : 0.18;
+    if (d3Dots)  d3Dots.style('fill', nodeColor).style('opacity', nodeOpacity);
+    if (d3Lines) d3Lines.style('stroke', lineColor).style('stroke-opacity', lineOpacity);
   }
 
-  // Hero section fade-in and typing
-  const heroContent = document.querySelector('.hero-content');
-  const typedName = document.getElementById('typed-name');
-  const typedSubtitle = document.getElementById('typed-subtitle');
-  
-  if (heroContent && typedName && typedSubtitle) {
-    heroContent.style.opacity = '0';
-    heroContent.style.transform = 'translateY(30px)';
-    heroContent.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-    
-    setTimeout(() => {
-      heroContent.style.opacity = '1';
-      heroContent.style.transform = 'translateY(0)';
-      
-      // Start typing name after fade-in
-      setTimeout(() => {
-        typeWriter(typedName, 'Connor Mcilhinney.', 80, () => {
-          // Start typing subtitle after name is complete
-          setTimeout(() => {
-            typeWriter(typedSubtitle, 'I build things.', 80);
-          }, 300);
-        });
-      }, 500);
-    }, 100);
-  }
-
-  // D3.js 3D Network Animation
   const container = document.getElementById('d3-background');
   if (container) {
-    const width = container.offsetWidth;
-    const height = container.offsetHeight;
-    
-    const svg = d3.select('#d3-background')
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height);
-    
-    const nodes = d3.range(50).map(() => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 2,
-      vy: (Math.random() - 0.5) * 2,
-      radius: Math.random() * 3 + 1
+    const w = container.offsetWidth;
+    const h = container.offsetHeight;
+
+    const svg = d3.select('#d3-background').append('svg')
+      .attr('width', w).attr('height', h);
+
+    const nodes = d3.range(55).map(() => ({
+      x:  Math.random() * w,
+      y:  Math.random() * h,
+      vx: (Math.random() - 0.5) * 1.2,
+      vy: (Math.random() - 0.5) * 1.2,
+      r:  Math.random() * 2.2 + 0.8,
     }));
-    
+
     const links = [];
-    nodes.forEach((node, i) => {
-      nodes.slice(i + 1).forEach((otherNode, j) => {
-        if (Math.random() < 0.1) {
-          links.push({ source: node, target: otherNode });
-        }
+    nodes.forEach((a, i) => {
+      nodes.slice(i + 1).forEach(b => {
+        if (Math.random() < 0.07) links.push({ source: a, target: b });
       });
     });
-    
-    const link = svg.selectAll('.link')
-      .data(links)
-      .enter().append('line')
-      .attr('class', 'link')
-      .style('stroke', '#64ffda')
-      .style('stroke-opacity', 0.3)
-      .style('stroke-width', 1);
-    
-    const node = svg.selectAll('.node')
-      .data(nodes)
-      .enter().append('circle')
-      .attr('class', 'node')
-      .attr('r', d => d.radius)
-      .style('fill', '#64ffda')
-      .style('opacity', 0.6);
-    
-    function animate() {
-      nodes.forEach(node => {
-        node.x += node.vx;
-        node.y += node.vy;
-        
-        if (node.x < 0 || node.x > width) node.vx *= -1;
-        if (node.y < 0 || node.y > height) node.vy *= -1;
-        
-        node.x = Math.max(0, Math.min(width, node.x));
-        node.y = Math.max(0, Math.min(height, node.y));
+
+    d3Lines = svg.selectAll('line').data(links).enter().append('line')
+      .style('stroke', '#D4A843')
+      .style('stroke-opacity', 0.18)
+      .style('stroke-width', 0.8);
+
+    d3Dots = svg.selectAll('circle').data(nodes).enter().append('circle')
+      .attr('r', d => d.r)
+      .style('fill', '#D4A843')
+      .style('opacity', 0.5);
+
+    // Apply current theme colors immediately
+    updateD3Colors(localStorage.getItem('theme') || 'dark');
+
+    (function tick() {
+      nodes.forEach(n => {
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0 || n.x > w) n.vx *= -1;
+        if (n.y < 0 || n.y > h) n.vy *= -1;
+        n.x = Math.max(0, Math.min(w, n.x));
+        n.y = Math.max(0, Math.min(h, n.y));
       });
-      
-      node
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y);
-      
-      link
-        .attr('x1', d => d.source.x)
-        .attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x)
-        .attr('y2', d => d.target.y);
-      
-      requestAnimationFrame(animate);
-    }
-    
-    animate();
+      d3Dots.attr('cx', d => d.x).attr('cy', d => d.y);
+      d3Lines
+        .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+      requestAnimationFrame(tick);
+    })();
   }
 
-  // Experience Section D3 Effects
-  const experienceSection = document.getElementById('experience');
-  const experienceObserver = new IntersectionObserver((entries) => {
+  // ── Fun facts 3D card tilt ───────────────────────────────────
+  document.querySelectorAll('.ff-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const cx = r.width / 2, cy = r.height / 2;
+      card.style.transform = `perspective(800px) rotateX(${(y - cy) / 16}deg) rotateY(${(cx - x) / 16}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+  });
+
+  // ── Navbar: glass bg + hide-on-down / reveal-on-up ──────────
+  const navbar = document.querySelector('.navbar');
+  const hero   = document.querySelector('.hero');
+
+  let lastScrollY  = window.scrollY;
+  let navRafPending = false;
+
+  function handleNavScroll() {
+    const y       = window.scrollY;
+    const heroH   = hero ? hero.offsetHeight : window.innerHeight;
+    const isLight = html.dataset.theme === 'light';
+
+    // Glass background — kicks in after 60px
+    if (y > 60) {
+      navbar.style.background     = isLight ? 'rgba(245,240,232,0.93)' : 'rgba(10,10,8,0.93)';
+      navbar.style.backdropFilter = 'blur(20px) saturate(1.4)';
+      navbar.style.borderBottom   = isLight
+        ? '1px solid rgba(208,203,195,0.6)'
+        : '1px solid rgba(37,35,32,0.6)';
+      navbar.classList.add('nav-scrolled');
+    } else {
+      navbar.style.background     = 'transparent';
+      navbar.style.backdropFilter = '';
+      navbar.style.borderBottom   = '';
+      navbar.classList.remove('nav-scrolled');
+    }
+
+    // Hide on scroll-down, reveal on scroll-up — only past the hero
+    if (y > heroH) {
+      const delta = y - lastScrollY;
+      if (delta > 6)       navbar.classList.add('nav-hidden');
+      else if (delta < -4) navbar.classList.remove('nav-hidden');
+    } else {
+      navbar.classList.remove('nav-hidden');
+    }
+
+    lastScrollY   = y;
+    navRafPending = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!navRafPending) {
+      navRafPending = true;
+      requestAnimationFrame(handleNavScroll);
+    }
+  }, { passive: true });
+
+  handleNavScroll();
+
+  // ── Active nav link — highlights current section ─────────────
+  const navLinks   = document.querySelectorAll('a.nav-link');
+  const pageSections = document.querySelectorAll('section[id]');
+
+  const sectionObs = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const jobs = entry.target.querySelectorAll('.job');
-        
-        jobs.forEach((job, index) => {
-          setTimeout(() => {
-            job.style.opacity = '1';
-            job.style.transform = 'translateX(0)';
-            
-            // Animate skill bar
-            const skillFill = job.querySelector('.job-skills-fill');
-            const skillLevel = job.dataset.skills;
-            if (skillFill && skillLevel) {
-              setTimeout(() => {
-                skillFill.style.width = skillLevel + '%';
-              }, 300);
-            }
-            
-            // Animate description items
-            const descItems = job.querySelectorAll('.job-description li');
-            descItems.forEach((item, i) => {
-              setTimeout(() => {
-                item.style.opacity = '1';
-                item.style.transform = 'translateY(0)';
-              }, 500 + i * 100);
-            });
-          }, index * 200);
-        });
-        
-        experienceObserver.unobserve(entry.target);
-      }
+      if (!entry.isIntersecting) return;
+      navLinks.forEach(l => l.classList.remove('nav-link--active'));
+      const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('nav-link--active');
     });
-  }, { threshold: 0.2 });
-  
-  if (experienceSection) {
-    experienceObserver.observe(experienceSection);
-  }
+  }, {
+    rootMargin: '-25% 0px -65% 0px',
+    threshold:  0,
+  });
 
-  // D3 Experience Visualizations
-  // PDI Tech Stack - Animated dots
-  const pdiViz = d3.select('#pdi-viz')
-    .append('svg')
-    .attr('width', '100%')
-    .attr('height', 60);
-  
-  const techData = d3.range(8).map(i => ({ x: 20 + i * 30, y: 30 }));
-  pdiViz.selectAll('.tech-dot')
-    .data(techData)
-    .enter()
-    .append('circle')
-    .attr('class', 'tech-dot')
-    .attr('cx', d => d.x)
-    .attr('cy', d => d.y)
-    .attr('r', 0)
-    .attr('fill', '#64ffda')
-    .attr('opacity', 0.7)
-    .transition()
-    .delay((d, i) => i * 100)
-    .duration(500)
-    .attr('r', 4)
-    .on('end', function() {
-      d3.select(this)
-        .transition()
-        .duration(1500)
-        .attr('r', 6)
-        .attr('opacity', 0.4)
-        .transition()
-        .duration(1500)
-        .attr('r', 4)
-        .attr('opacity', 0.7)
-        .on('end', function pulse() {
-          d3.select(this)
-            .transition()
-            .duration(2000 + Math.random() * 1000)
-            .attr('r', 6)
-            .attr('opacity', 0.4)
-            .transition()
-            .duration(2000 + Math.random() * 1000)
-            .attr('r', 4)
-            .attr('opacity', 0.7)
-            .on('end', pulse);
-        });
-    });
+  pageSections.forEach(s => sectionObs.observe(s));
 
-  // GT Investment Committee - Stock chart simulation
-  const gtViz = d3.select('#gt-viz')
-    .append('svg')
-    .attr('width', '100%')
-    .attr('height', 60);
-  
-  const chartData = d3.range(10).map(i => ({ x: i * 25, y: 30 + Math.random() * 20 }));
-  
-  const line = d3.line()
-    .x(d => d.x)
-    .y(d => d.y)
-    .curve(d3.curveMonotoneX);
-  
-  gtViz.append('path')
-    .datum(chartData)
-    .attr('fill', 'none')
-    .attr('stroke', '#64ffda')
-    .attr('stroke-width', 2)
-    .attr('d', line)
-    .attr('stroke-dasharray', function() { return this.getTotalLength(); })
-    .attr('stroke-dashoffset', function() { return this.getTotalLength(); })
-    .transition()
-    .duration(2000)
-    .attr('stroke-dashoffset', 0);
-  
-  gtViz.selectAll('.data-point')
-    .data(chartData)
-    .enter()
-    .append('circle')
-    .attr('class', 'data-point')
-    .attr('cx', d => d.x)
-    .attr('cy', d => d.y)
-    .attr('r', 0)
-    .attr('fill', '#64ffda')
-    .transition()
-    .delay((d, i) => i * 200)
-    .duration(300)
-    .attr('r', 3);
-
-  // Canopy - Growth bars
-  const canopyViz = d3.select('#canopy-viz')
-    .append('svg')
-    .attr('width', '100%')
-    .attr('height', 60);
-
-  
-  const growthBars = [15, 25, 35, 20, 30];
-  canopyViz.selectAll('.growth-bar')
-    .data(growthBars)
-    .enter()
-    .append('rect')
-    .attr('class', 'growth-bar')
-    .attr('x', (d, i) => 20 + i * 40)
-    .attr('y', 50)
-    .attr('width', 25)
-    .attr('height', 0)
-    .attr('fill', '#64ffda')
-    .attr('opacity', 0.7)
-    .transition()
-    .delay((d, i) => i * 300)
-    .duration(1000)
-    .attr('height', d => d)
-    .attr('y', d => 50 - d);
-
-  // Noded - Software Engineering Network Visualization
-  const nodedViz = d3.select('#noded-viz')
-    .append('svg')
-    .attr('width', '100%')
-    .attr('height', 60);
-  
-  // Create a network of interconnected nodes representing software systems
-  const networkNodes = [
-    { id: 0, x: 30, y: 30, type: 'api', size: 5 },
-    { id: 1, x: 80, y: 20, type: 'database', size: 4 },
-    { id: 2, x: 130, y: 35, type: 'frontend', size: 4 },
-    { id: 3, x: 180, y: 25, type: 'backend', size: 5 },
-    { id: 4, x: 230, y: 30, type: 'microservice', size: 3 },
-    { id: 5, x: 280, y: 35, type: 'cache', size: 3 },
-    { id: 6, x: 330, y: 25, type: 'queue', size: 3 }
-  ];
-  
-  const networkLinks = [
-    { source: 0, target: 1, strength: 0.8 },
-    { source: 0, target: 2, strength: 0.6 },
-    { source: 1, target: 3, strength: 0.9 },
-    { source: 2, target: 3, strength: 0.7 },
-    { source: 3, target: 4, strength: 0.8 },
-    { source: 4, target: 5, strength: 0.5 },
-    { source: 5, target: 6, strength: 0.6 },
-    { source: 0, target: 6, strength: 0.4 }
-  ];
-  
-  // Draw connections
-  nodedViz.selectAll('.network-link')
-    .data(networkLinks)
-    .enter()
-    .append('line')
-    .attr('class', 'network-link')
-    .attr('x1', d => networkNodes[d.source].x)
-    .attr('y1', d => networkNodes[d.source].y)
-    .attr('x2', d => networkNodes[d.target].x)
-    .attr('y2', d => networkNodes[d.target].y)
-    .style('stroke', '#64ffda')
-    .style('stroke-width', 0)
-    .style('stroke-opacity', 0)
-    .transition()
-    .delay((d, i) => i * 150)
-    .duration(800)
-    .style('stroke-width', d => d.strength * 2)
-    .style('stroke-opacity', 0.6);
-  
-  // Draw nodes
-  const nodeElements = nodedViz.selectAll('.network-node')
-    .data(networkNodes)
-    .enter()
-    .append('circle')
-    .attr('class', 'network-node')
-    .attr('cx', d => d.x)
-    .attr('cy', d => d.y)
-    .attr('r', 0)
-    .attr('fill', '#64ffda')
-    .attr('opacity', 0);
-  
-  // Animate nodes appearing
-  nodeElements
-    .transition()
-    .delay((d, i) => i * 200)
-    .duration(600)
-    .attr('r', d => d.size)
-    .attr('opacity', 0.8)
-    .on('end', function() {
-      // Start pulsing animation after nodes appear
-      d3.select(this)
-        .transition()
-        .duration(2000 + Math.random() * 1000)
-        .attr('r', d => d.size * 1.3)
-        .attr('opacity', 0.4)
-        .transition()
-        .duration(2000 + Math.random() * 1000)
-        .attr('r', d => d.size)
-        .attr('opacity', 0.8)
-        .on('end', function pulse() {
-          d3.select(this)
-            .transition()
-            .duration(2000 + Math.random() * 1000)
-            .attr('r', d => d.size * 1.3)
-            .attr('opacity', 0.4)
-            .transition()
-            .duration(2000 + Math.random() * 1000)
-            .attr('r', d => d.size)
-            .attr('opacity', 0.8)
-            .on('end', pulse);
-        });
-    });
-  
-  // Add data flow animation
-  const dataFlow = nodedViz.append('circle')
-    .attr('r', 2)
-    .attr('fill', '#64ffda')
-    .attr('opacity', 0.8);
-  
-  function animateDataFlow() {
-    const path = [
-      [30, 30], [80, 20], [130, 35], [180, 25], [230, 30], [280, 35], [330, 25]
-    ];
-    
-    dataFlow
-      .attr('cx', path[0][0])
-      .attr('cy', path[0][1])
-      .attr('opacity', 0.8)
-      .transition()
-      .duration(3000)
-      .ease(d3.easeLinear)
-      .tween('attr', function() {
-        return function(t) {
-          const currentIndex = Math.floor(t * (path.length - 1));
-          const nextIndex = Math.min(currentIndex + 1, path.length - 1);
-          const progress = (t * (path.length - 1)) % 1;
-          
-          const current = path[currentIndex];
-          const next = path[nextIndex];
-          
-          const x = current[0] + (next[0] - current[0]) * progress;
-          const y = current[1] + (next[1] - current[1]) * progress;
-          
-          d3.select(this).attr('cx', x).attr('cy', y);
-        };
-      })
-      .attr('opacity', 0)
-      .on('end', () => {
-        setTimeout(animateDataFlow, 2000);
-      });
-  }
-  
-  // Start data flow animation after a delay
-  setTimeout(animateDataFlow, 1000);
-  
-  // Fun Facts Background Particles & Mouse Interaction
-  const funFactsSection = document.getElementById('fun-facts');
-  const funFactsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        initFunFactsEffects();
-        funFactsObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.3 });
-  
-  if (funFactsSection) {
-    funFactsObserver.observe(funFactsSection);
-  }
-
-  function initFunFactsEffects() {
-    // Background particle system
-    const particleContainer = d3.select('.fun-facts-content')
-      .insert('div', ':first-child')
-      .style('position', 'absolute')
-      .style('top', '0')
-      .style('left', '0')
-      .style('width', '100%')
-      .style('height', '100%')
-      .style('pointer-events', 'none')
-      .style('z-index', '0')
-      .append('svg')
-      .attr('width', '100%')
-      .attr('height', '100%');
-    
-    const particles = d3.range(2000).map(() => ({
-      x: Math.random() * 1000,
-      y: Math.random() * 600,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      radius: Math.random() * 2 + 1
-    }));
-    
-    const particleNodes = particleContainer.selectAll('.particle')
-      .data(particles)
-      .enter().append('circle')
-      .attr('class', 'particle')
-      .attr('r', d => d.radius)
-      .attr('fill', '#64ffda')
-      .attr('opacity', 0.3);
-    
-    function animateParticles() {
-      particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > 1000) p.vx *= -1;
-        if (p.y < 0 || p.y > 600) p.vy *= -1;
-      });
-      
-      particleNodes
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y);
-      
-      requestAnimationFrame(animateParticles);
-    }
-    animateParticles();
-    
-    // Mouse interaction for cards
-    document.querySelectorAll('.fact-item').forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateX = (y - centerY) / 10;
-        const rotateY = (centerX - x) / 10;
-        
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
-        card.style.boxShadow = `${(x - centerX) / 5}px ${(y - centerY) / 5}px 25px rgba(100, 255, 218, 0.2)`;
-      });
-      
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
-        card.style.boxShadow = '';
-      });
-    });
-  }
-
-  // Add CSS for fun facts effects
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes ripple {
-      to {
-        transform: scale(4);
-        opacity: 0;
-      }
-    }
-    .fun-facts-content {
-      position: relative;
-    }
-    .fact-item {
-      transition: all 0.005s ease;
-      position: relative;
-      z-index: 1;
-    }
-  `;
-  document.head.appendChild(style);
 });

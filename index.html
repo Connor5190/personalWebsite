@@ -3,264 +3,310 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connor Mcilhinney | Portfolio</title>
+  <title>Connor Mcilhinney</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+
+  <!-- Scroll progress -->
+  <div class="scroll-progress" id="scroll-progress"></div>
+
   <!-- Navigation -->
   <nav class="navbar">
-    <div class="nav-container">
-      <div class="nav-logo">
-        <a href="#home">Connor Mcilhinney</a>
-      </div>
-      <ul class="nav-menu">
-        <li><a href="#about" class="nav-link"><span>01.</span> About</a></li>
-        <li><a href="#experience" class="nav-link"><span>02.</span> Experience</a></li>
-        <li><a href="#projects" class="nav-link"><span>03.</span> Work</a></li>
-        <li><a href="#fun-facts" class="nav-link"><span>04.</span> Fun Facts</a></li>
-        <li><a href="#contact" class="nav-link"><span>05.</span> Contact</a></li>
-        <li><a href="assets/Connor_Mcilhinney_Resume.pdf" class="resume-btn">Resume</a></li>
-      </ul>
-    </div>
+    <a href="#home" class="nav-logo">CM</a>
+    <ul class="nav-menu">
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#experience" class="nav-link">Experience</a></li>
+      <li><a href="#projects" class="nav-link">Work</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+      <li><a href="assets/Connor_Mcilhinney_Resume.pdf" class="resume-btn" target="_blank">Résumé&nbsp;↗</a></li>
+    </ul>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode">
+      <!-- Moon icon — shown in dark mode -->
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <!-- Sun icon — shown in light mode -->
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    </button>
   </nav>
 
-  <!-- Hero Section -->
-  <main class="main-content">
-    <section id="home" class="hero">
-      <div id="d3-background"></div>
-      <div class="hero-content">
-        <p class="hero-intro">Hi, my name is</p>
-        <h1 class="hero-title" id="typed-name"></h1>
-        <h2 class="hero-subtitle" id="typed-subtitle"></h2>
-        <p class="hero-description">
-          I'm a computer science student at Georgia Tech specializing in AI and internetworks.
+  <!-- ── HERO ──────────────────────────────────── -->
+  <section id="home" class="hero">
+    <div id="d3-background"></div>
+
+    <div class="hero-eyebrow">CS @ Georgia Tech &nbsp;·&nbsp; AI + Internetworks</div>
+
+    <div class="hero-name-block">
+      <div class="hero-name-wrap">
+        <span class="hero-name-line" data-delay="0">CONNOR</span>
+      </div>
+      <div class="hero-name-wrap">
+        <span class="hero-name-line hero-name-gold" data-delay="80">MCILHINNEY.</span>
+      </div>
+    </div>
+
+    <div class="hero-foot">
+      <p class="hero-desc">
+        I build products that make<br>life easier for real people.
+      </p>
+      <a href="#projects" class="hero-cta">
+        View Work
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ─────────────────────────────────── -->
+  <section id="about" class="section-about">
+    <div class="about-photo-col">
+      <div class="about-photo-grid">
+        <div class="apg-cell"><img src="assets/headshot.jpg" alt="Connor Mcilhinney"></div>
+        <div class="apg-cell"><img src="assets/me(skiing).jpg" alt="Skiing"></div>
+        <div class="apg-cell"><img src="assets/me(surfing).jpg" alt="Surfing"></div>
+        <div class="apg-cell"><img src="assets/me(soccer).jpg" alt="Soccer"></div>
+      </div>
+      <span class="about-photo-caption">Connor Mcilhinney, 2025</span>
+    </div>
+    <div class="about-text-col">
+      <div class="about-marker">
+        <span class="s-num">01</span>
+        <span class="s-label">About</span>
+      </div>
+      <div class="about-body">
+        <p class="about-lead">
+          Hello — I'm a builder.<br>
+          Software has been my<br>
+          tool since 2019.
         </p>
-        <a href="#projects" class="cta-button">Check out my work!</a>
-      </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="section">
-      <div class="section-container">
-        <h2 class="section-title"><span class="section-number">01.</span> About Me</h2>
-        <div class="about-content">
-          <div class="about-text">
-            <p>
-              Hello! My name is Connor Mcilhinney and I enjoy building products or things that make the lives of others easier.
-              My interest in computer science started back in 2019 when I decided to learn how to code in the car while my mom drove me to soccer practice!
-              
-            </p>
-            <p>
-              Fast-forward to today, and I've had the privilege of working at various companies. 
-              My main focus these days is building accessible, inclusive products and digital 
-              experiences for a variety of clients.
-            </p>
-            <p>Here are a few technologies I've been working with recently:</p>
-            <ul class="skills-list">
-              <li>AWS</li>
-              <li>PostgreSQL</li>
-              <li>YOLOv8</li>
-              <li>Django</li>
-              <li>Retool</li>
-              <li>N8N</li>
-            </ul>
-          </div>
-          <div class="about-image">
-            <div class="image-wrapper">
-              <img src="assets/headshot.jpg" alt="Your Name" class="headshot">
-            </div>
+        <p class="about-para">
+          Fast-forward to today, and I've had the privilege of working at various companies.
+          My main focus these days is building accessible, inclusive products and digital experiences.
+        </p>
+        <div class="about-stack">
+          <span class="stack-label">Recently working with</span>
+          <div class="stack-chips">
+            <span>AWS</span><span>PostgreSQL</span><span>YOLOv8</span>
+            <span>Django</span><span>Retool</span><span>N8N</span>
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- Experience Section -->
-    <section id="experience" class="section">
-      <div class="section-container">
-        <h2 class="section-title"><span class="section-number">02.</span> Where I've Gained Experience</h2>
-        <div class="experience-content">
-          <div class="experience-timeline"></div>
-          <!-- Noded -->
-          <div class="job" data-skills="100">
-            <h3 class="job-title">Software Engineer Intern <span class="company">@ <a href="https://www.getnoded.ai/" target="_blank" rel="noopener noreferrer">Noded</a></span></h3>
-            <p class="job-date">August 2025 - Present</p>
-            <div class="job-skills">
-              <div class="job-skills-fill"></div>
-            </div>
-            <div class="experience-viz" id="noded-viz"></div>
-            <ul class="job-description">
-              <li>Engineered Python backend services leveraging requests and BeautifulSoup to validate article URLs, detect accessibility issues (redirects, paywalls, CAPTCHAs), and extract clean HTML content</li>
-              <li>Integrated third-party APIs (Finnhub, Alpha Vantage) to enrich company news retrieval, unifying heterogeneous data sources into a normalized JSON schema </li>
-              <li>Built relevance-scoring framework combining keyword heuristics and LLM-based semantic filtering for higher-precision news ranking</li>
-            </ul>
-          </div>
-
-          <!-- PDI -->
-          <div class="job" data-skills="100">
-            <h3 class="job-title">Software Engineer Intern <span class="company">@ <a href="https://pditechnologies.com" target="_blank" rel="noopener noreferrer">PDI Technologies</a></span></h3>
-            <p class="job-date">June 2025 - August 2025</p>
-            <div class="job-skills">
-              <div class="job-skills-fill"></div>
-            </div>
-            <div class="experience-viz" id="pdi-viz"></div>
-            <ul class="job-description">
-              <li>Designed and provisioned AWS infrastructure (ECS, ALB, IAM, RDS PostgreSQL, Secrets Manager) to securely deploy and scale n8n, an open-source automation platform</li>
-              <li>Containerized n8n using Docker and orchestrated deployments with Terraform for a reliable, repeatable infrastructure-as-code workflow</li>
-              <li>Rolled out n8n access to all ~2,400 employees, empowering organization-wide automation through a secure, cloud-native solution</li>
-            </ul>
-          </div>
-
-          <!-- Investment Committee -->
-          <div class="job" data-skills="100">
-            <h3 class="job-title">Quantitative Analyst <span class="company">@ <a href="https://gtsf.gatech.edu" target="_blank" rel="noopener noreferrer">GT Investment Committee</a></span></h3>
-            <p class="job-date">January 2025 - Present</p>
-            <div class="job-skills">
-              <div class="job-skills-fill"></div>
-            </div>
-            <div class="experience-viz" id="gt-viz"></div>
-            <ul class="job-description">
-              <li>Researched insider trading patterns using SEC Form 4 filings to assess employee confidence and uncover potential investment signals</li>
-              <li>Built a Python-based backtesting system incorporating weighted factors such as employee role, trade size, and timing</li>
-              <li>Presented the strategy to the committee, leading to its adoption within GTSF's $2.6 million actively managed portfolio</li>
-            </ul>
-          </div>
-
-          <!-- Canopy -->
-          <div class="job" data-skills="100">
-            <h3 class="job-title">Software Engineer Intern <span class="company">@ <a href="https://www.gocanopy.com/" target="_blank" rel="noopener noreferrer">Canopy</a></span></h3>
-            <p class="job-date">June 2022 - August 2022</p>
-            <div class="job-skills">
-              <div class="job-skills-fill"></div>
-            </div>
-            <div class="experience-viz" id="canopy-viz"></div>
-            <ul class="job-description">
-              <li>Conducted competitive research to identify strategic application opportunities for Canopy’s outbound software solutions</li>
-              <li>Collaborated directly with the Head of Sales and CEO to understand client needs and refine product-market fit for emerging technologies</li>
-              <li>Gained exposure to executive-level decision-making and agile development cycles in a fast-paced startup environment</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" class="section">
-      <div class="section-container">
-        <h2 class="section-title"><span class="section-number">03.</span> Some Things I've Built</h2>
-        <div class="projects-list">
-          <div class="project">
-            <div class="project-content">
-              <p class="project-overline">Featured Project</p>
-              <h3 class="project-title">Highlight Generator</h3>
-              <div class="project-description">
-                <p>
-                  A web app for creating highlight reels from soccer match footage using computer vision.
-                </p>
-              </div>
-              <ul class="project-tech-list">
-                <li>YOLO</li>
-                <li>Pillow</li>
-                <li>Flask</li>
-              </ul>
-              <div class="project-links">
-                <a href="https://github.com/Connor5190/HighlightGenerator" aria-label="GitHub Link">
-                  <i class="fab fa-github"></i>
-                </a>
-                <a href="#" aria-label="External Link">
-                  <i class="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-            </div>
-            <div class="project-image">
-              <a href="assets/process.mov" target="_blank">
-                <img src="assets/freeze_frame_screenshot.png" alt="Highlight Generator">
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Fun Facts Section -->
-    <section id="fun-facts" class="section">
-      <div class="section-container">
-        <h2 class="section-title"><span class="section-number">04.</span> Fun Facts About Me</h2>
-        <div class="fun-facts-content">
-          <div class="fact-grid">
-            <div class="fact-item">
-              <div class="fact-image">
-                <img src="assets/ATLU.jpg" alt="Atlanta United">
-              </div>
-
-              <h3>Soccer Player</h3>
-              <p>I have played soccer my entire life and currently work with Atlanta United as a partner for their Unified team.</p>
-            </div>
-            <div class="fact-item">
-              <div class="fact-image">
-                <img src="assets/GaelicFootball.jpg" alt="Study Abroad">
-              </div>
-
-              <h3>Study Abroad</h3>
-              <p>After my Freshman year I spent 13 weeks in the summer living in Barcelona. I was able to travel to 8 different countries while taking 13 credit hours!</p>
-            </div>
-            <div class="fact-item">
-              <div class="fact-image">
-                <img src="assets/IMG_7429.JPEG" alt="Family">
-              </div>
-
-              <h3>Large Family</h3>
-              <p>I come from a large family with four siblings, three dogs, and one cat, so I am used to chaos!</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="section">
-      <div class="section-container">
-        <h2 class="section-title"><span class="section-number">05.</span> What's Next?</h2>
-        <div class="contact-content">
-          <h3 class="contact-title">Get In Touch</h3>
-          <p class="contact-description">
-            I am always looking for new opportunities and experiences, so my inbox is 
-            always open. Whether you have a question or just want to say hi, I'll try 
-            my best to get back to you!
-          </p>
-          <a href="mailto:Connormac9@icloud.com" class="contact-button">Say Hello</a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Side Elements -->
-  <div class="fixed-left">
-    <ul class="social-links">
-      <li><a href="https://github.com/Connor5190" aria-label="GitHub"><i class="fab fa-github"></i></a></li>
-      <li><a href="https://www.linkedin.com/in/connor-mcilhinney/" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a></li>
-      <li><a href="https://instagram.com/connormcilhinney" aria-label="Instagram"><i class="fab fa-instagram"></i></a></li>
-    </ul>
-  </div>
-  
-  <div class="fixed-right">
-    <div class="email-link">
-      <a href="mailto:Connormac9@icloud.com">Connormac9@icloud.com</a>
     </div>
-  </div>
+  </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <p>Built by Me</p>
+  <!-- ── EXPERIENCE ────────────────────────────── -->
+  <section id="experience" class="section-experience">
+    <div class="exp-header">
+      <span class="s-num">02</span>
+      <h2 class="exp-title">Experience</h2>
     </div>
-  </footer>
 
-  <!-- Scripts -->
+    <div class="exp-list">
+
+      <div class="exp-row">
+        <div class="exp-meta">
+          <span class="exp-date">2025 — Now</span>
+          <span class="exp-role">Software Engineer Intern</span>
+        </div>
+        <div class="exp-body">
+          <h3 class="exp-co"><a href="https://www.getnoded.ai/" target="_blank" rel="noopener">Noded ↗</a></h3>
+          <ul class="exp-bullets">
+            <li>Engineered Python backend services using requests + BeautifulSoup to validate article URLs, detect paywalls, and extract clean HTML</li>
+            <li>Integrated Finnhub + Alpha Vantage APIs to unify heterogeneous data sources into a normalized JSON schema</li>
+            <li>Built a relevance-scoring framework combining keyword heuristics and LLM-based semantic filtering</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-row">
+        <div class="exp-meta">
+          <span class="exp-date">Jun — Aug 2025</span>
+          <span class="exp-role">Software Engineer Intern</span>
+        </div>
+        <div class="exp-body">
+          <h3 class="exp-co"><a href="https://pditechnologies.com" target="_blank" rel="noopener">PDI Technologies ↗</a></h3>
+          <ul class="exp-bullets">
+            <li>Provisioned AWS infrastructure (ECS, ALB, IAM, RDS PostgreSQL, Secrets Manager) to deploy and scale n8n</li>
+            <li>Containerized n8n with Docker; orchestrated with Terraform for a repeatable IaC workflow</li>
+            <li>Rolled out access to ~2,400 employees through a secure, cloud-native automation platform</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-row">
+        <div class="exp-meta">
+          <span class="exp-date">2025 — Now</span>
+          <span class="exp-role">Quantitative Analyst</span>
+        </div>
+        <div class="exp-body">
+          <h3 class="exp-co"><a href="https://gtsf.gatech.edu" target="_blank" rel="noopener">GT Investment Committee ↗</a></h3>
+          <ul class="exp-bullets">
+            <li>Researched insider trading patterns using SEC Form 4 filings to surface investment signals</li>
+            <li>Built a Python backtesting system with weighted factors: role, trade size, and timing</li>
+            <li>Strategy adopted into GTSF's $2.6M actively managed portfolio</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-row">
+        <div class="exp-meta">
+          <span class="exp-date">Jun — Aug 2022</span>
+          <span class="exp-role">Software Engineer Intern</span>
+        </div>
+        <div class="exp-body">
+          <h3 class="exp-co"><a href="https://www.gocanopy.com/" target="_blank" rel="noopener">Canopy ↗</a></h3>
+          <ul class="exp-bullets">
+            <li>Conducted competitive research to identify strategic opportunities for Canopy's outbound software</li>
+            <li>Collaborated with the Head of Sales and CEO to refine product-market fit</li>
+            <li>Gained exposure to executive decision-making in a fast-paced startup environment</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── PROJECTS ───────────────────────────────── -->
+  <section id="projects" class="section-projects">
+    <div class="projects-header">
+      <span class="s-num">03</span>
+      <h2 class="projects-title">Work</h2>
+    </div>
+
+    <div class="project-feature">
+      <div class="project-feature-image">
+        <img src="assets/freeze_frame_screenshot.png" alt="Highlight Generator screenshot">
+      </div>
+      <div class="project-feature-info">
+        <span class="project-tag">Featured Project</span>
+        <h3 class="project-name">Highlight<br>Generator</h3>
+        <p class="project-desc">
+          A web app that generates soccer highlight reels from raw match footage using YOLO object detection
+          to identify key moments automatically.
+        </p>
+        <div class="project-stack">
+          <span>YOLO</span><span>Pillow</span><span>Flask</span>
+        </div>
+        <a href="https://github.com/Connor5190/HighlightGenerator" class="project-link" target="_blank" rel="noopener">
+          GitHub ↗
+        </a>
+      </div>
+    </div>
+
+    <div class="project-feature project-feature--flip">
+      <div class="project-feature-info">
+        <span class="project-tag">Machine Learning · Live</span>
+        <h3 class="project-name">UFC Fight<br>Predictor</h3>
+        <p class="project-desc">
+          ML model trained on thousands of historical UFC bouts to predict fight outcomes.
+          Select any two fighters and get win probabilities derived from striking stats,
+          grappling records, and physical matchup data. Includes a betting value calculator.
+        </p>
+        <div class="project-stack">
+          <span>Python</span><span>pandas</span><span>FastAPI</span><span>Docker</span><span>Web Scraping</span><span>Feature Engineering</span>
+        </div>
+        <div class="project-links-row">
+          <a href="https://ufc-ml-fight-predictor.fly.dev/" class="project-link" target="_blank" rel="noopener">
+            Live App ↗
+          </a>
+          <a href="https://github.com/jtillman2/Machine-Learning-Project" class="project-link project-link--secondary" target="_blank" rel="noopener">
+            GitHub ↗
+          </a>
+          <a href="assets/UFC_Fight_Prediction___Final_Report.pdf" class="project-link project-link--secondary" target="_blank" rel="noopener">
+            Research Paper ↗
+          </a>
+        </div>
+      </div>
+      <div class="project-feature-image">
+        <img src="assets/mma_webpage_screenshot.png" alt="UFC Fight Predictor interface">
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FUN FACTS ──────────────────────────────── -->
+  <section id="fun-facts" class="section-funfacts">
+    <div class="ff-header">
+      <span class="s-num">04</span>
+      <h2 class="ff-title">Life,<br>Outside the<br>Terminal</h2>
+    </div>
+
+    <div class="ff-grid">
+      <div class="ff-card ff-card--wide">
+        <div class="ff-img-wrap">
+          <img src="assets/ATLU.jpg" alt="Atlanta United">
+        </div>
+        <div class="ff-info">
+          <h3>Soccer Player</h3>
+          <p>Played my entire life. Currently partnered with Atlanta United's Unified team.</p>
+        </div>
+      </div>
+      <div class="ff-card ff-card--tall">
+        <div class="ff-img-wrap">
+          <img src="assets/GaelicFootball.jpg" alt="Study Abroad">
+        </div>
+        <div class="ff-info">
+          <h3>13 Weeks in Barcelona</h3>
+          <p>8 countries, 13 credit hours, zero regrets.</p>
+        </div>
+      </div>
+      <div class="ff-card">
+        <div class="ff-img-wrap">
+          <img src="assets/IMG_7429.JPEG" alt="Family">
+        </div>
+        <div class="ff-info">
+          <h3>Large Family</h3>
+          <p>4 siblings, 3 dogs, 1 cat. Chaos is home.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ────────────────────────────────── -->
+  <section id="contact" class="section-contact">
+    <div class="contact-inner">
+      <span class="contact-eyebrow"><span class="s-num">05</span> — Say Hello</span>
+      <h2 class="contact-headline">
+        Let's make<br>
+        <em>something</em><br>
+        good.
+      </h2>
+      <a href="mailto:Connormac9@icloud.com" class="contact-email-btn">
+        Connormac9@icloud.com&nbsp;↗
+      </a>
+      <div class="contact-links">
+        <a href="https://github.com/Connor5190" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/connor-mcilhinney/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="https://instagram.com/connormcilhinney" target="_blank" rel="noopener">Instagram ↗</a>
+      </div>
+    </div>
+    <div class="contact-footer">
+      <span>Built by Connor Mcilhinney</span>
+      <span>2026</span>
+    </div>
+  </section>
+
   <script src="scripts/script.js"></script>
 </body>
 </html>
