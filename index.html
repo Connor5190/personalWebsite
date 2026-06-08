@@ -28,7 +28,7 @@
       <li><a href="#experience" class="nav-link">Experience</a></li>
       <li><a href="#projects" class="nav-link">Projects</a></li>
       <li><a href="#contact" class="nav-link">Contact</a></li>
-      <li><a href="assets/Connor_Mcilhinney_Resume.pdf" class="resume-btn" target="_blank">Résumé&nbsp;↗</a></li>
+      <li><a href="assets/Connor_Mcilhinney_Resume.pdf" class="resume-btn" target="_blank">Resume&nbsp;↗</a></li>
     </ul>
     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode">
       <!-- Moon icon — shown in dark mode -->
@@ -129,7 +129,7 @@
           <div class="stack-chips">
             <span>AWS</span><span>GCP</span><span>YOLOv8</span>
             <span>Docker</span><span>SQL</span><span>N8N</span>
-            <span>Terraform</span><span>OpenCV</span>
+            <span>Terraform</span><span>OpenCV</span><span>Modal</span>
           </div>
         </div>
       </div>
@@ -231,29 +231,34 @@
     </div>
 
     <div class="project-feature">
-      <div class="project-feature-image">
+      <a href="https://highlightgenerator.fly.dev/" class="project-feature-image" target="_blank" rel="noopener">
         <img src="assets/freeze_frame_screenshot.png" alt="Highlight Generator screenshot">
-      </div>
+      </a>
       <div class="project-feature-info">
-        <span class="project-tag">Featured Project</span>
-        <h3 class="project-name">Highlight<br>Generator</h3>
+        <span class="project-tag">Computer Vision · Live</span>
+        <h3 class="project-name"><a href="https://highlightgenerator.fly.dev/" target="_blank" rel="noopener">Highlight<br>Generator</a></h3>
         <p class="project-desc">
           A web app that generates soccer highlight reels from raw match footage using YOLO object detection
           to identify key moments automatically.
         </p>
         <div class="project-stack">
-          <span>YOLO</span><span>Pillow</span><span>Flask</span>
+          <span>YOLOv8</span><span>OpenCV</span><span>Flask</span><span>Docker</span><span>Fly.io</span><span>Modal</span><span>PyTorch</span><span>Pillow</span><span>NumPy</span>
         </div>
-        <a href="https://github.com/Connor5190/HighlightGenerator" class="project-link" target="_blank" rel="noopener">
-          GitHub ↗
-        </a>
+        <div class="project-links-row">
+          <a href="https://highlightgenerator.fly.dev/" class="project-link" target="_blank" rel="noopener">
+            Live App ↗
+          </a>
+          <a href="https://github.com/Connor5190/HighlightGenerator" class="project-link project-link--secondary" target="_blank" rel="noopener">
+            GitHub ↗
+          </a>
+        </div>
       </div>
     </div>
 
     <div class="project-feature project-feature--flip">
       <div class="project-feature-info">
         <span class="project-tag">Machine Learning · Live</span>
-        <h3 class="project-name">UFC Fight<br>Predictor</h3>
+        <h3 class="project-name"><a href="https://ufc-ml-fight-predictor.fly.dev/" target="_blank" rel="noopener">UFC Fight<br>Predictor</a></h3>
         <p class="project-desc">
           ML model trained on thousands of historical UFC bouts to predict fight outcomes.
           Select any two fighters and get win probabilities derived from striking stats,
@@ -274,9 +279,9 @@
           </a>
         </div>
       </div>
-      <div class="project-feature-image">
+      <a href="https://ufc-ml-fight-predictor.fly.dev/" class="project-feature-image" target="_blank" rel="noopener">
         <img src="assets/mma_webpage_screenshot.png" alt="UFC Fight Predictor interface">
-      </div>
+      </a>
     </div>
   </section>
 
